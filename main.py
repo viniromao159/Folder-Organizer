@@ -1,50 +1,52 @@
-from os import listdir
+import os
+from pathlib import Path
 
-arquivos = input(r'Digite o caminho da pasta -> exemplo (C:\Users\Nome\Downloads): ').replace("\\", "/")
-arq_lista = listdir(arquivos)
-arq_ext = []
-pasta = []
-outros_ext = []
-arq_tipo = {
-    '.png':'Imagem','.jpg':'Imagem','.jpeg':'Imagem',
-    '.exe':'Executavel',
-    '.pdf':'PDF',
-    '.txt':'Arquivo de texto',
-    '.mp4':'Audios','.mp4':'Audios',
-    '.rar':'Compactados', '.zip':'Compactados',
-    '.iso':'Arquivos ISO',
-    '.docx':'Office', '.ppsx':'Office','.xltx' :'Office',
-    'outros':'Outros',
+caminho = input("Digite o caminho da pasta: ").replace('\\', '/')
+
+lista_arquivo = os.listdir(caminho)
+
+arq_tipo = { 
+        'Imagem':['.png', '.jpg', '.jpeg'],
+        'Executavel':['.exe'],    
+        'PDF':['.pdf'],
+        'Arquivo de texto':['.txt'],
+        'Audios':['.mp3','.mp4'],
+        'Compactados':['.rar','.zip'],
+        'Arquivos ISO':['.iso'],
+        'Office':['.docx', '.ppsx','.xltx'],
+        'DLL':['.dll'],
+        'Outros':['outros']
     }
 
+filtro = []
 
-#separação dos itens da pasta
-for arq in arq_lista:
-    
-    if '.' in arq:
-        ponto = arq.rfind(".")
-        extensao = arq[ponto:]   
+# Loop em cada item do dicionario
+for nome_pasta, extensoes in arq_tipo.items():
+    #pega o valor de cada chave do dicionario, neste caso o array de extenções
+    for extensao in extensoes:
         
-        if extensao in arq_tipo and extensao not in arq_ext:
-            arq_ext.append(extensao)
+        for arquivo in lista_arquivo:
             
-        elif extensao not in arq_tipo:
-            outros_ext.append(extensao)
+            # retorna um array filtrado com o nome dos arquivos de acordo com a extenção
+            if extensao in arquivo:
+                filtro.append(arquivo)
+                
+        #Se o filtro tiver algum arquivo
+        if len(filtro) > 0:
             
-            if "outros" not in arq_ext:
-                arq_ext.append("outros")
-    
-    else:
-        pasta.append(arq)
-
-if len(arq_ext) > 0: #Verifica se tem arquivo nas pastas
-    
-    for ext in arq_ext: #Criação das pastas
-        #criapasta
+            for arq in filtro:
+                #verifica a extensão do arquivo e cria a pasta (se necessario), e move o arquivo
+                if extensao in arq:
+                    Path(f'{caminho}/{nome_pasta}').mkdir(exist_ok=True)
+                    os.rename(f'{caminho}/{arq}', f'{caminho}/{nome_pasta}/{arq}')
+                    
         
-else:
-    print("Não movimentação a ser feita nesta pasta!")
+                
 
     
 
-        
+
+                    
+                
+    
+    
